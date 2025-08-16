@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВАСАБУШКА - Доставка и самовывоз суши в Новосибирске</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <img src="logo.jpg" alt="ВАСАБУШКА Logo" class="logo">
+        <p>Доставка суши и роллов в Новосибирске</p>
+        <div id="auth-status" class="auth-status"></div>
+        <div id="auth-buttons" class="auth-buttons">
+            <button class="sign-in-btn" onclick="showSignInModal()">Sign In</button>
+            <button class="sign-up-btn" onclick="showSignUpModal()">Sign Up</button>
+        </div>
+    </header>
+    <nav>
+        <a href="#menu">Меню</a>
+        <a href="#cart-section">Корзина</a>
+        <a href="#promos">Акции</a>
+        <a href="#restaurants">Рестораны</a>
+        <a href="#delivery">О доставке</a>
+        <a href="#contacts">Контакты</a>
+        <div id="order-nav" class="order-nav"></div>
+    </nav>
+    <section class="region-select" id="region-select">
+        <h3>Ваш регион: Новосибирск?</h3>
+        <button onclick="confirmRegion()">Верно</button>
+    </section>
+    <section class="promo-carousel" id="promos">
+        <h2>Акции ВАСАБУШКА</h2>
+        <div class="carousel-slide">
+            <img src="dos.png" alt="Скидка на доставку">
+            <p><strong>Скидка 10% на доставку:</strong> Закажите на сумму от 3000 руб. и получите 10% скидку!</p>
+        </div>
+        <div class="carousel-slide">
+            <img src="sama.png" alt="Скидка на самовывоз">
+            <p><strong>Скидка 10% на самовывоз:</strong> Получите 10% скидку на любой заказ при самовывозе!</p>
+        </div>
+    </section>
+    <section class="menu-container">
+        <aside class="sidebar">
+            <a onclick="showCategory('rolls')">Роллы</a>
+            <a onclick="showCategory('maki')">Маки роллы</a>
+            <a onclick="showCategory('warm-rolls')">Тёплые роллы</a>
+            <a onclick="showCategory('sweet-rolls')">Сладкие роллы</a>
+            <a onclick="showCategory('philly-rolls')">Филадельфии роллы</a>
+            <a onclick="showCategory('baked-rolls')">Запечённые роллы</a>
+            <a onclick="showCategory('sets')">Сеты</a>
+            <a onclick="showCategory('gunkan-nigiri')">Гункан-нигири</a>
+            <a onclick="showCategory('appetizers')">Аппетайзеры</a>
+            <a onclick="showCategory('udon-teppanyaki')">Удон-Тепаньяки</a>
+        </aside>
+        <main class="main-menu">
+            <div id="rolls" class="category"></div>
+            <div id="maki" class="category"></div>
+            <div id="warm-rolls" class="category"></div>
+            <div id="sweet-rolls" class="category"></div>
+            <div id="philly-rolls" class="category"></div>
+            <div id="baked-rolls" class="category"></div>
+            <div id="sets" class="category"></div>
+            <div id="gunkan-nigiri" class="category"></div>
+            <div id="appetizers" class="category"></div>
+            <div id="udon-teppanyaki" class="category"></div>
+        </main>
+    </section>
+    <section id="cart-section">
+        <h2>Корзина заказа</h2>
+        <div id="cart"><p>Корзина пуста</p></div>
+        <button id="submit-order-btn" class="order-btn" onclick="showAuthModal()">Оформить заказ</button>
+    </section>
+    <section id="checkout" style="display: none;">
+        <h2>Оформление заказа</h2>
+        <form id="checkout-form">
+            <label>Улица</label><input type="text" id="street" required>
+            <label>Дом</label><input type="text" id="home" required>
+            <label>Квартира</label><input type="text" id="apart">
+            <label>Подъезд</label><input type="text" id="pod">
+            <label>Этаж</label><input type="text" id="et">
+            <label>Оплата</label>
+            <select id="pay" required>
+                <option value="1">Наличными</option>
+                <option value="2">Картой</option>
+            </select>
+            <button type="button" id="submit-order-btn-checkout" class="order-btn" onclick="submitOrder()">Отправить заказ</button>
+        </form>
+        <div id="order-status" style="display: none;">
+            <h3>Отслеживание заказа</h3>
+            <p id="status-text">Статус: Обработка</p>
+            <button id="cancel-order-btn" onclick="cancelOrder()">Отмена заказа</button>
+            <p id="support-text" style="display: none;">Позвоните на горячую линию: +7 999 982 78 99</p>
+        </div>
+    </section>
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <h3>Вход</h3>
+            <button onclick="signInWithGoogle()">Войти через Gmail</button>
+            <button class="close-btn" onclick="closeAuthModal()">Закрыть</button>
+        </div>
+    </div>
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <h3>Регистрация</h3>
+            <button onclick="signUpWithGoogle()">Зарегистрироваться через Gmail</button>
+            <button class="close-btn" onclick="closeSignUpModal()">Закрыть</button>
+        </div>
+    </div>
+    <section id="restaurants">
+        <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 2l-8 4v2h16V6l-8-4zm-8 6v10h5v-6h6v6h5V8H4z"/></svg>
+        <h2>Рестораны</h2>
+        <p>Адреса: г. Новосибирск, ул. Вкусная, 1</p>
+        <p>Режим работы: с 10:00 до 23:30</p>
+    </section>
+    <section id="delivery">
+        <svg class="section-icon" viewBox="0 0 24 24"><path d="M20 8h-3V6.21a2 2 0 0 0-1.41-1.9L13 4l-1.81 1.81A2 2 0 0 0 9 7.79V8H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-10a2 2 0 0 0-2-2zm-6 0h-4v-1a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1z"/></svg>
+        <h2>О доставке</h2>
+        <p>Доставка суши и роллов по Новосибирску с 10:00 до 23:30. Минимальная сумма заказа — 1000 руб. Стоимость доставки зависит от адреса.</p>
+    </section>
+    <section id="contacts">
+        <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+        <h2>Контакты</h2>
+        <p>Телефон: +7 (123) 456-78-90</p>
+        <p>Email: <a href="mailto:order@vasabushka.ru">order@vasabushka.ru</a></p>
+        <p>Адрес: г. Новосибирск, ул. Вкусная, 1</p>
+    </section>
+    <footer>
+        <p>© 2025 ВАСАБУШКА. Все права защищены.</p>
+        <a href="#privacy">Политика конфиденциальности</a>
+        <a href="#agreement">Пользовательское соглашение</a>
+        <a href="#data-processing">Согласие на обработку данных</a>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
