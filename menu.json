@@ -1,0 +1,36 @@
+{
+  "rolls": {
+    "roll1": {
+      "id": "roll1",
+      "name": "Калифорния ролл",
+      "description": "Лосось, авокадо, огурец, тобико",
+      "price": 320,
+      "category": "rolls",
+      "image": "https://images.unsplash.com/photo-1571407970349-bc81e7e96d47",
+      "topSelling": true,
+      "discount": 0
+    },
+    "roll2": {
+      "id": "roll2",
+      "name": "Филадельфия",
+      "description": "Лосось, сливочный сыр",
+      "price": 350,
+      "category": "rolls",
+      "image": "https://images.unsplash.com/photo-1617196034792-5c7b2cd47443",
+      "topSelling": false,
+      "discount": 5
+    }
+  },
+  "maki": {
+    "maki1": {
+      "id": "maki1",
+      "name": "Каппа маки",
+      "description": "Огурец, кунжут",
+      "price": 200,
+      "category": "maki",
+      "image": "https://images.unsplash.com/photo-1532347231146-80afc9e9142e",
+      "topSelling": false,
+      "discount": 10
+    }
+  }
+}

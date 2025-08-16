@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ВАСАБУШКА - Админ-панель</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #1C2526;
+            --secondary-bg: #2D3839;
+            --accent: #7CFC00;
+            --border: #3A4647;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-bg);
+            color: #FFFFFF;
+            font-size: 16px;
+        }
+        header {
+            background: var(--secondary-bg);
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 2px solid var(--accent);
+        }
+        header img.logo {
+            max-width: 10rem;
+            height: auto;
+        }
+        h1, h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        #admin-panel {
+            max-width: 90%;
+            width: 50rem;
+            margin: 1rem auto;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+        }
+        #admin-panel button {
+            background: var(--accent);
+            color: var(--primary-bg);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 700;
+            margin: 0.5rem;
+            transition: transform 0.2s, background 0.3s;
+        }
+        #admin-panel button:hover {
+            background: #6BDB00;
+            transform: scale(1.05);
+        }
+        #dish-form label {
+            display: block;
+            margin: 0.5rem 0 0.3rem;
+            font-weight: 700;
+        }
+        #dish-form input, #dish-form select, #dish-form textarea {
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            background: var(--border);
+            color: #FFFFFF;
+            box-sizing: border-box;
+        }
+        #dish-form input[type="text"].image-url {
+            background: var(--border);
+        }
+        #image-preview {
+            max-width: 100%;
+            max-height: 150px;
+            margin: 0.5rem 0;
+            display: none;
+            border-radius: 5px;
+        }
+        #dish-list {
+            margin-top: 1rem;
+        }
+        .dish-item {
+            border: 1px solid var(--border);
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        .dish-item img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-right: 1rem;
+            border-radius: 5px;
+        }
+        .dish-item button {
+            padding: 0.4rem 0.8rem;
+        }
+        #status-message {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        #status-message.success {
+            background: var(--accent);
+            color: var(--primary-bg);
+        }
+        #status-message.error {
+            background: #FF0000;
+            color: #FFFFFF;
+        }
+        @media (max-width: 600px) {
+            body { font-size: 14px; }
+            header img.logo { max-width: 8rem; }
+            h1, h2 { font-size: 1.2rem; }
+            #admin-panel { 
+                width: 100%; 
+                padding: 0.8rem; 
+            }
+            #admin-panel button { 
+                width: 100%; 
+                padding: 0.8rem; 
+            }
+            .dish-item { 
+                flex-direction: column; 
+                text-align: center; 
+                font-size: 0.8rem; 
+            }
+            .dish-item img { 
+                margin: 0.5rem 0; 
+            }
+            .dish-item button { 
+                width: 100%; 
+                margin: 0.3rem 0; 
+            }
+            #dish-form input, #dish-form select, #dish-form textarea {
+                font-size: 0.9rem;
+            }
+            #image-preview {
+                max-height: 100px;
+            }
+            #status-message {
+                font-size: 0.9rem;
+            }
+        }
+        @media (min-width: 601px) and (max-width: 900px) {
+            #admin-panel { width: 90%; }
+            .dish-item { font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="https://images.unsplash.com/photo-1588315029754-2dd089d39a1a" alt="ВАСАБУШКА Logo" class="logo" />
+        <h1>ВАСАБУШКА - Админ-панель</h1>
+    </header>
+    <section id="admin-panel">
+        <h2>Управление меню</h2>
+        <div id="status-message"></div>
+        <form id="dish-form">
+            <input type="hidden" id="dish-id">
+            <label>Название блюда</label>
+            <input type="text" id="dish-name" required>
+            <label>Описание</label>
+            <textarea id="dish-description" required></textarea>
+            <label>Цена (руб.)</label>
+            <input type="number" id="dish-price" required min="0" step="0.01">
+            <label>URL изображения</label>
+            <input type="text" id="dish-image-url" class="image-url" placeholder="https://example.com/image.jpg" required>
+            <img id="image-preview" alt="Предпросмотр изображения" />
+            <label>Категория</label>
+            <select id="dish-category" required>
+                <option value="rolls">Роллы</option>
+                <option value="maki">Маки роллы</option>
+                <option value="warm-rolls">Тёплые роллы</option>
+                <option value="sweet-rolls">Сладкие роллы</option>
+                <option value="philly-rolls">Филадельфии роллы</option>
+                <option value="baked-rolls">Запечённые роллы</option>
+                <option value="sets">Сеты</option>
+                <option value="gunkan-nigiri">Гункан-нигири</option>
+                <option value="appetizers">Аппетайзеры</option>
+                <option value="udon-teppanyaki">Удон-Тепаньяки</option>
+            </select>
+            <label>Скидка (%)</label>
+            <input type="number" id="dish-discount" value="0" min="0" max="100">
+            <label>Топ продаж</label>
+            <input type="checkbox" id="dish-top-selling">
+            <button type="button" onclick="saveDish()">Сохранить блюдо</button>
+        </form>
+        <h2>Список блюд</h2>
+        <div id="dish-list"></div>
+    </section>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js';
+        import { getDatabase, ref, get, set, remove, push } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyABSRGOruMxS7GIkrkzdvSoZ8muZxaqG6g",
+            authDomain: "vasabushka.firebaseapp.com",
+            projectId: "vasabushka",
+            storageBucket: "vasabushka.firebasestorage.app",
+            messagingSenderId: "956450423767",
+            appId: "1:956450423767:web:7e450d1a5916281ca0c192",
+            measurementId: "G-QWXYMQRYG1"
+        };
+
+        // Initialize Firebase
+        let app, db;
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            console.log('Firebase initialized successfully:', app.name);
+        } catch (error) {
+            console.error('Firebase initialization failed:', error);
+            showStatusMessage('Ошибка инициализации Firebase: ' + error.message, 'error');
+        }
+
+        // Load dishes on page load
+        if (db) {
+            loadDishes();
+        } else {
+            console.error('Database not initialized, cannot load dishes');
+            document.getElementById('dish-list').innerHTML = '<p>Ошибка: Не удалось подключиться к базе данных</p>';
+        }
+
+        // Status message helper
+        function showStatusMessage(message, type) {
+            const statusMessage = document.getElementById('status-message');
+            statusMessage.textContent = message;
+            statusMessage.className = type;
+            statusMessage.style.display = 'block';
+            if (type === 'success') {
+                setTimeout(() => { statusMessage.style.display = 'none'; }, 3000);
+            }
+        }
+
+        // Image preview handler
+        document.getElementById('dish-image-url').addEventListener('input', (e) => {
+            const url = e.target.value.trim();
+            const preview = document.getElementById('image-preview');
+            console.log('Image URL input:', url);
+            if (url) {
+                preview.src = url;
+                preview.style.display = 'block';
+                preview.onerror = () => {
+                    preview.src = 'https://via.placeholder.com/150';
+                    showStatusMessage('Ошибка: Неверный URL изображения', 'error');
+                };
+            } else {
+                preview.style.display = 'none';
+            }
+        });
+
+        async function saveDish() {
+            console.log('saveDish called');
+            if (!db) {
+                showStatusMessage('Ошибка: База данных не инициализирована', 'error');
+                console.error('Database not initialized');
+                return;
+            }
+
+            const dishId = document.getElementById('dish-id').value || push(ref(db, `menu/${document.getElementById('dish-category').value}`)).key;
+            const dish = {
+                id: dishId,
+                name: document.getElementById('dish-name').value.trim(),
+                description: document.getElementById('dish-description').value.trim(),
+                price: parseFloat(document.getElementById('dish-price').value),
+                category: document.getElementById('dish-category').value,
+                discount: parseInt(document.getElementById('dish-discount').value) || 0,
+                topSelling: document.getElementById('dish-top-selling').checked,
+                image: document.getElementById('dish-image-url').value.trim()
+            };
+
+            console.log('Dish data to save:', dish);
+
+            // Input validation
+            if (!dish.name || !dish.description || !dish.price || !dish.category || !dish.image) {
+                showStatusMessage('Ошибка: Заполните все обязательные поля (название, описание, цена, категория, URL изображения)', 'error');
+                console.error('Validation failed: Missing required fields');
+                return;
+            }
+            if (isNaN(dish.price) || dish.price < 0) {
+                showStatusMessage('Ошибка: Цена должна быть положительным числом', 'error');
+                console.error('Validation failed: Invalid price');
+                return;
+            }
+            if (dish.discount < 0 || dish.discount > 100) {
+                showStatusMessage('Ошибка: Скидка должна быть от 0 до 100%', 'error');
+                console.error('Validation failed: Invalid discount');
+                return;
+            }
+            if (!dish.image.match(/\.(jpg|jpeg|png|gif)$/i)) {
+                showStatusMessage('Ошибка: URL изображения должен быть .jpg, .jpeg, .png или .gif', 'error');
+                console.error('Validation failed: Invalid image URL');
+                return;
+            }
+
+            try {
+                await set(ref(db, `menu/${dish.category}/${dishId}`), dish);
+                showStatusMessage(`Блюдо "${dish.name}" успешно сохранено!`, 'success');
+                console.log('Dish saved successfully:', dish);
+                document.getElementById('dish-form').reset();
+                document.getElementById('dish-id').value = '';
+                document.getElementById('image-preview').style.display = 'none';
+                loadDishes();
+            } catch (error) {
+                showStatusMessage(`Ошибка сохранения блюда: ${error.code || error.message}`, 'error');
+                console.error('Save dish error:', error.code, error.message);
+            }
+        }
+
+        async function loadDishes() {
+            console.log('loadDishes called');
+            const dishList = document.getElementById('dish-list');
+            if (!db) {
+                dishList.innerHTML = '<p>Ошибка: Не удалось подключиться к базе данных</p>';
+                console.error('Database not initialized');
+                return;
+            }
+
+            try {
+                const snapshot = await get(ref(db, 'menu'));
+                const menuData = snapshot.val();
+                console.log('Menu data retrieved:', menuData);
+                if (!menuData) {
+                    dishList.innerHTML = '<p>Блюда отсутствуют. Добавьте новое блюдо.</p>';
+                    console.log('No menu data found');
+                    return;
+                }
+                let html = '';
+                for (const categoryId in menuData) {
+                    for (const dishId in menuData[categoryId]) {
+                        const dish = menuData[categoryId][dishId];
+                        html += `
+                            <div class="dish-item">
+                                <img src="${dish.image}" alt="${dish.name}" onerror="this.src='https://via.placeholder.com/50'" />
+                                <span>${dish.name} (${dish.category}, ${dish.price} руб., Скидка: ${dish.discount}%, Топ: ${dish.topSelling ? 'Да' : 'Нет'})</span>
+                                <div>
+                                    <button onclick="editDish('${categoryId}', '${dishId}')">Редактировать</button>
+                                    <button onclick="deleteDish('${categoryId}', '${dishId}')">Удалить</button>
+                                </div>
+                            </div>`;
+                    }
+                }
+                dishList.innerHTML = html || '<p>Блюда отсутствуют. Добавьте новое блюдо.</p>';
+                console.log('Dish list updated successfully');
+            } catch (error) {
+                dishList.innerHTML = `<p>Ошибка загрузки блюд: ${error.code || error.message}</p>`;
+                console.error('Load dishes error:', error.code, error.message);
+                showStatusMessage(`Ошибка загрузки блюд: ${error.code || error.message}`, 'error');
+            }
+        }
+
+        async function editDish(categoryId, dishId) {
+            console.log('editDish called:', categoryId, dishId);
+            if (!db) {
+                showStatusMessage('Ошибка: База данных не инициализирована', 'error');
+                console.error('Database not initialized');
+                return;
+            }
+
+            try {
+                const snapshot = await get(ref(db, `menu/${categoryId}/${dishId}`));
+                const dish = snapshot.val();
+                if (dish) {
+                    document.getElementById('dish-id').value = dishId;
+                    document.getElementById('dish-name').value = dish.name;
+                    document.getElementById('dish-description').value = dish.description;
+                    document.getElementById('dish-price').value = dish.price;
+                    document.getElementById('dish-category').value = dish.category;
+                    document.getElementById('dish-discount').value = dish.discount;
+                    document.getElementById('dish-top-selling').checked = dish.topSelling;
+                    document.getElementById('dish-image-url').value = dish.image;
+                    const preview = document.getElementById('image-preview');
+                    preview.src = dish.image;
+                    preview.style.display = 'block';
+                    document.getElementById('dish-image-url').removeAttribute('required');
+                    console.log('Dish loaded for editing:', dish);
+                } else {
+                    console.error('Dish not found:', categoryId, dishId);
+                    showStatusMessage('Ошибка: Блюдо не найдено', 'error');
+                }
+            } catch (error) {
+                console.error('Edit dish error:', error.code, error.message);
+                showStatusMessage(`Ошибка загрузки блюда: ${error.code || error.message}`, 'error');
+            }
+        }
+
+        async function deleteDish(categoryId, dishId) {
+            console.log('deleteDish called:', categoryId, dishId);
+            if (!db) {
+                showStatusMessage('Ошибка: База данных не инициализирована', 'error');
+                console.error('Database not initialized');
+                return;
+            }
+
+            if (confirm('Удалить блюдо?')) {
+                try {
+                    await remove(ref(db, `menu/${categoryId}/${dishId}`));
+                    showStatusMessage('Блюдо успешно удалено!', 'success');
+                    console.log('Dish deleted successfully:', categoryId, dishId);
+                    loadDishes();
+                } catch (error) {
+                    console.error('Delete dish error:', error.code, error.message);
+                    showStatusMessage(`Ошибка удаления блюда: ${error.code || error.message}`, 'error');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

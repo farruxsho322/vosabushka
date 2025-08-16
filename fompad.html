@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест API FrontPad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1C2526;
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            gap: 20px;
+        }
+        button {
+            background: #7CFC00;
+            color: #1C2526;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            touch-action: manipulation;
+        }
+        button:hover {
+            background: #6BDB00;
+            transform: scale(1.05);
+        }
+        @media (max-width: 600px) {
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button onclick="getProducts()">Получить товары</button>
+    <button onclick="sendOrder()">Отправить заказ</button>
+
+    <script>
+        async function getProducts() {
+            console.log('Попытка получить список товаров из FrontPad...');
+            const secret = 'DtaBG8NaBKh2se5RQd2BEZzrsh4DQf8eD8F87e8yRfh7kaN4eBsHiQ3D2R6D24Gn3akYeieZsnTFryyyYN67rTAbAsEih9B8aQTe225daNHr76KSGENZka2KtsYDsiAs2eAK6sR65ni2hYERneBDfnaBGZ427reYzEyrY9iQnyBze6ataDYfSZGkGAaEQekaKGryGB8ZYAf3thhtN6DsR9FkzFRaK5aiBsF7SESD43sh8DEKz64b5znr46';
+            const params = new URLSearchParams();
+            params.append('secret', secret);
+
+            try {
+                const apiUrl = 'https://app.frontpad.ru/api/index.php?get_products';
+                console.log('Отправка запроса на:', apiUrl);
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: params.toString()
+                });
+                console.log('Статус ответа:', response.status, response.statusText);
+                const text = await response.text();
+                console.log('Сырой ответ сервера:', text);
+                if (!text) {
+                    console.error('Пустой ответ от сервера');
+                    alert('Ошибка: сервер вернул пустой ответ. Проверь VPN.');
+                    return;
+                }
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error('Ошибка парсинга JSON:', e.message, 'Текст ответа:', text);
+                    alert('Ошибка: некорректный формат ответа: ' + text);
+                    return;
+                }
+                if (result.result === 'success') {
+                    console.log('Список товаров:', result);
+                    alert('Товары получены! Проверь консоль. Используй product_id для заказа.');
+                } else {
+                    console.error('Ошибка FrontPad:', result.error || 'Неизвестная ошибка');
+                    alert('Ошибка FrontPad: ' + (result.error || 'Неизвестная ошибка.'));
+                }
+            } catch (error) {
+                console.error('Ошибка сети:', error.message);
+                alert('Ошибка сети: ' + error.message + '. Используй VPN или прокси.');
+            }
+        }
+
+        async function sendOrder() {
+            console.log('Попытка отправить заказ в FrontPad...');
+            const secret = 'DtaBG8NaBKh2se5RQd2BEZzrsh4DQf8eD8F87e8yRfh7kaN4eBsHiQ3D2R6D24Gn3akYeieZsnTFryyyYN67rTAbAsEih9B8aQTe225daNHr76KSGENZka2KtsYDsiAs2eAK6sR65ni2hYERneBDfnaBGZ427reYzEyrY9iQnyBze6ataDYfSZGkGAaEQekaKGryGB8ZYAf3thhtN6DsR9FkzFRaK5aiBsF7SESD43sh8DEKz64b5znr46';
+            const params = new URLSearchParams();
+            params.append('secret', secret);
+            // Замени '123' на реальный артикул из списка товаров
+            params.append('product[0]', '123'); // Артикул товара
+            params.append('product_kol[0]', '1'); // Количество
+
+            console.log('Данные заказа:', {
+                secret: secret.slice(0, 10) + '...',
+                product: '123',
+                quantity: '1'
+            });
+
+            try {
+                const apiUrl = 'https://app.frontpad.ru/api/index.php?new_order';
+                console.log('Отправка запроса на:', apiUrl);
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'Accept': 'application/json'
+                    },
+                    body: params.toString()
+                });
+                console.log('Статус ответа:', response.status, response.statusText);
+                const text = await response.text();
+                console.log('Сырой ответ сервера:', text);
+                if (!text) {
+                    console.error('Пустой ответ от сервера');
+                    alert('Ошибка: сервер вернул пустой ответ. Проверь VPN.');
+                    return;
+                }
+                let result;
+                try {
+                    result = JSON.parse(text);
+                } catch (e) {
+                    console.error('Ошибка парсинга JSON:', e.message, 'Текст ответа:', text);
+                    alert('Ошибка: некорректный формат ответа: ' + text);
+                    return;
+                }
+                if (result.result === 'success') {
+                    console.log('Заказ успешно отправлен:', result);
+                    alert('Заказ успешно отправлен! Номер заказа: ' + (result.order_id || 'неизвестен'));
+                } else {
+                    console.error('Ошибка FrontPad:', result.error || 'Неизвестная ошибка');
+                    alert('Ошибка FrontPad: ' + (result.error || 'Неизвестная ошибка.'));
+                }
+            } catch (error) {
+                console.error('Ошибка сети:', error.message);
+                alert('Ошибка сети: ' + error.message + '. Используй VPN или прокси.');
+            }
+        }
+
+        document.querySelectorAll('button')[0].addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('Касание кнопки: Получить товары');
+            getProducts();
+        });
+        document.querySelectorAll('button')[0].addEventListener('click', () => {
+            console.log('Клик по кнопке: Получить товары');
+            getProducts();
+        });
+        document.querySelectorAll('button')[1].addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            console.log('Касание кнопки: Отправить заказ');
+            sendOrder();
+        });
+        document.querySelectorAll('button')[1].addEventListener('click', () => {
+            console.log('Клик по кнопке: Отправить заказ');
+            sendOrder();
+        });
+    </script>
+</body>
+</html>
